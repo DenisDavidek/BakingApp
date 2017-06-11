@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <dimen name="divider_height">2dp</dimen>
+    <dimen name="divider_height1dp">1dp</dimen>
+
+    <dimen name="progressBar_width_height">42dp</dimen>
+
+    <dimen name="recipe_detail_fragment_width">400dp</dimen>
+
+    <dimen name="text_high_size">22sp</dimen>
+    <dimen name="text_medium_size">20sp</dimen>
+    <dimen name="text_low_size">18sp</dimen>
+
+    <dimen name="recyclerview_marginBottom">30dp</dimen>
+    <dimen name="tv_marginLeft">5dp</dimen>
+    <dimen name="tv_padding">8dp</dimen>
+    <dimen name="zerodpheight">0dp</dimen>
+</resources>
