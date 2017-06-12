@@ -1,16 +1,13 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".RecipeStepInstructionFragment">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <TextView
         android:id="@+id/tv_recipe_step_instruction"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:text="@string/hello_blank_fragment"
+        android:gravity="left"
         android:textSize="@dimen/text_medium_size"
         android:textStyle="bold"
-        android:gravity="left"/>
+        tools:text="@string/hello_blank_fragment" />
 
-</FrameLayout>
+</layout>

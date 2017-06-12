@@ -1,14 +1,13 @@
-package sk.denis.davidek.baking;
+package sk.denis.davidek.baking.fragments;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -21,17 +20,17 @@ import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
 import java.util.ArrayList;
 
+import sk.denis.davidek.baking.R;
 import sk.denis.davidek.baking.data.RecipeStep;
+import sk.denis.davidek.baking.databinding.FragmentRecipeStepMediaBinding;
 
 
 /**
@@ -54,13 +53,13 @@ public class RecipeStepMediaFragment extends Fragment implements ExoPlayer.Event
 
     private OnFragmentInteractionListener mListener;
 
-    private SimpleExoPlayerView exoPlayerView;
     private SimpleExoPlayer exoPlayer;
-
-    private TextView erroNoUrlTextView;
 
     private ArrayList<RecipeStep> recipeSteps;
     private int currentRecipeStepsIndex;
+    public long currentExoPlayerPosition;
+
+    private FragmentRecipeStepMediaBinding mediaBinding;
 
     public RecipeStepMediaFragment() {
         // Required empty public constructor
@@ -93,62 +92,57 @@ public class RecipeStepMediaFragment extends Fragment implements ExoPlayer.Event
         }
     }
 
-    public long test;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View fragmentView = inflater.inflate(R.layout.fragment_recipe_step_media, container, false);
+
+        mediaBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_step_media, container, false);
+        View fragmentView = mediaBinding.getRoot();
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(getString(R.string.key_intent_recipeSteps)) &&
-                    (savedInstanceState.containsKey(getString(R.string.key_intent_recipeStepsIndex)))) {
+                    (savedInstanceState.containsKey(getString(R.string.key_intent_recipeStepsIndex)) &&
+                            savedInstanceState.containsKey(getString(R.string.key_current_exoplayer_position)))) {
                 recipeSteps = savedInstanceState.getParcelableArrayList(getString(R.string.key_intent_recipeSteps));
-               currentRecipeStepsIndex = savedInstanceState.getInt(getString(R.string.key_intent_recipeStepsIndex));
-            test = savedInstanceState.getLong("test");
+                currentRecipeStepsIndex = savedInstanceState.getInt(getString(R.string.key_intent_recipeStepsIndex));
+                currentExoPlayerPosition = savedInstanceState.getLong(getString(R.string.key_current_exoplayer_position));
             }
 
         }
-        exoPlayerView = (SimpleExoPlayerView) fragmentView.findViewById(R.id.exo_playerView);
-        erroNoUrlTextView = (TextView) fragmentView.findViewById(R.id.tv_error_no_url);
 
-      //  if (!mediaUrl.isEmpty()) {
         if (recipeSteps != null)
             if (!recipeSteps.get(currentRecipeStepsIndex).getVideoUrl().isEmpty())
-            initializePlayer();
-            else{
-          //      Toast.makeText(getContext(),"empty url", Toast.LENGTH_SHORT).show();
-        showErrorMessage();
-           }
+                initializePlayer();
+            else {
+                //      Toast.makeText(getContext(),"empty url", Toast.LENGTH_SHORT).show();
+                showErrorMessage();
+            }
 
 
         return fragmentView;
     }
 
-public void showErrorMessage() {
-    erroNoUrlTextView.setVisibility(View.VISIBLE);
-    exoPlayerView.setVisibility(View.GONE);
-}
+    public void showErrorMessage() {
+        mediaBinding.tvErrorNoUrl.setVisibility(View.VISIBLE);
+        mediaBinding.exoPlayerView.setVisibility(View.GONE);
+    }
 
-    private void initializePlayer(){
+    private void initializePlayer() {
         if (exoPlayer == null) {
             TrackSelector trackSelector = new DefaultTrackSelector();
             LoadControl loadControl = new DefaultLoadControl();
-            exoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(),trackSelector,loadControl);
-            exoPlayerView.setPlayer(exoPlayer);
+            exoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector, loadControl);
+            mediaBinding.exoPlayerView.setPlayer(exoPlayer);
             exoPlayer.addListener(this);
 
             String userAgent = Util.getUserAgent(getContext(), "Baking");
-          //  MediaSource mediaSource = new HlsMediaSource(Uri.parse("https://d17h27t6h515a5.cloudfront.net/topher/2017/April/58ffd974_-intro-creampie/-intro-creampie.mp4"),new DefaultDataSourceFactory(getContext(),userAgent),null,null);
-
-           /* MediaSource mediaSource = new ExtractorMediaSource(Uri.parse("https://d17h27t6h515a5.cloudfront.net/topher/2017/April/58ffd974_-intro-creampie/-intro-creampie.mp4"),
-                    new DefaultDataSourceFactory(getContext(),userAgent), new DefaultExtractorsFactory(), null, null);*/
-
             MediaSource mediaSource = new ExtractorMediaSource(Uri.parse(recipeSteps.get(currentRecipeStepsIndex).getVideoUrl()),
-                    new DefaultDataSourceFactory(getContext(),userAgent), new DefaultExtractorsFactory(), null, null);
+                    new DefaultDataSourceFactory(getContext(), userAgent), new DefaultExtractorsFactory(), null, null);
             exoPlayer.prepare(mediaSource);
-            if (test >0)
-                exoPlayer.seekTo(test);
+            if (currentExoPlayerPosition > 0)
+                exoPlayer.seekTo(currentExoPlayerPosition);
             exoPlayer.setPlayWhenReady(true);
 
         }
@@ -162,11 +156,11 @@ public void showErrorMessage() {
         }
     }
 
-    public void setRecipeSteps(ArrayList<RecipeStep> recipeSteps){
+    public void setRecipeSteps(ArrayList<RecipeStep> recipeSteps) {
         this.recipeSteps = recipeSteps;
     }
 
-    public void setCurrentRecipeStepsIndex (int currentRecipeStepsIndex) {
+    public void setCurrentRecipeStepsIndex(int currentRecipeStepsIndex) {
         this.currentRecipeStepsIndex = currentRecipeStepsIndex;
     }
 
@@ -183,33 +177,29 @@ public void showErrorMessage() {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
-        }/* else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }*/
+        }
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         releasePlayer();
-      //  Toast.makeText(getContext(),"ondestroyview called", Toast.LENGTH_SHORT).show();
+        //  Toast.makeText(getContext(),"ondestroyview called", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
-       // on destroyview?
     }
 
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-    outState.putParcelableArrayList(getString(R.string.key_intent_recipeSteps),recipeSteps);
-        outState.putInt(getString(R.string.key_intent_recipeStepsIndex),currentRecipeStepsIndex);
-        outState.putLong("test", exoPlayer.getCurrentPosition());
+        outState.putParcelableArrayList(getString(R.string.key_intent_recipeSteps), recipeSteps);
+        outState.putInt(getString(R.string.key_intent_recipeStepsIndex), currentRecipeStepsIndex);
+        outState.putLong(getString(R.string.key_current_exoplayer_position), exoPlayer.getCurrentPosition());
     }
 
     @Override

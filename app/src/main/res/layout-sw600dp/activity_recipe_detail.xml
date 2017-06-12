@@ -6,7 +6,7 @@
 
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="@dimen/zerodpheight"
         android:layout_height="match_parent"
         android:layout_weight="0.35"
         android:orientation="horizontal">
@@ -14,19 +14,21 @@
 
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/recipe_detail_fragment"
-            android:name="sk.denis.davidek.baking.RecipeDetailFragment"
+            android:name="sk.denis.davidek.baking.fragments.RecipeDetailFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
 
     </LinearLayout>
+
     <View
         android:layout_width="@dimen/divider_height1dp"
         android:layout_height="match_parent"
         android:background="@android:color/darker_gray" />
+
     <LinearLayout
         android:id="@+id/rl_recipe_step_instruction"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/zerodpheight"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/activity_horizontal_margin"
         android:layout_weight="0.65"

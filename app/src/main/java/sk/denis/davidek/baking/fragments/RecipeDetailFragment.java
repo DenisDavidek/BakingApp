@@ -1,24 +1,24 @@
-package sk.denis.davidek.baking;
+package sk.denis.davidek.baking.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import sk.denis.davidek.baking.R;
 import sk.denis.davidek.baking.adapters.IngredientsAdapter;
 import sk.denis.davidek.baking.adapters.RecipeStepAdapter;
 import sk.denis.davidek.baking.data.Ingredient;
 import sk.denis.davidek.baking.data.RecipeStep;
+import sk.denis.davidek.baking.databinding.FragmentRecipeDetailBinding;
 import sk.denis.davidek.baking.interfaces.OnItemClickListener;
 
 
@@ -30,7 +30,7 @@ import sk.denis.davidek.baking.interfaces.OnItemClickListener;
  * Use the {@link RecipeDetailFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RecipeDetailFragment extends Fragment implements OnItemClickListener  {
+public class RecipeDetailFragment extends Fragment implements OnItemClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -42,13 +42,12 @@ public class RecipeDetailFragment extends Fragment implements OnItemClickListene
 
     private OnFragmentInteractionListener mListener;
 
-    private RecyclerView ingredientsRecyclerView;
-    private RecyclerView recipeStepsRecyclerView;
-
     private ArrayList<Ingredient> ingredients = new ArrayList<>();
     private ArrayList<RecipeStep> recipeSteps = new ArrayList<>();
 
     private OnItemClickListener clickListener;
+
+    private FragmentRecipeDetailBinding mBinding;
 
     public RecipeDetailFragment() {
         // Required empty public constructor
@@ -85,12 +84,14 @@ public class RecipeDetailFragment extends Fragment implements OnItemClickListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View fragmentView = inflater.inflate(R.layout.fragment_recipe_detail, container, false);
-        ingredientsRecyclerView = (RecyclerView) fragmentView.findViewById(R.id.rv_recipe_ingredients);
-        ingredientsRecyclerView.setHasFixedSize(true);
+
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_detail, container, false);
+        View fragmentView = mBinding.getRoot();
+
+        mBinding.rvRecipeIngredients.setHasFixedSize(true);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        ingredientsRecyclerView.setLayoutManager(layoutManager);
+        mBinding.rvRecipeIngredients.setLayoutManager(layoutManager);
 
         Intent intent = getActivity().getIntent();
         if (intent.hasExtra(getString(R.string.key_intent_ingredients))) {
@@ -98,21 +99,19 @@ public class RecipeDetailFragment extends Fragment implements OnItemClickListene
         }
 
         IngredientsAdapter ingredientsAdapter = new IngredientsAdapter(ingredients, getContext());
-        ingredientsRecyclerView.setAdapter(ingredientsAdapter);
+        mBinding.rvRecipeIngredients.setAdapter(ingredientsAdapter);
 
-        recipeStepsRecyclerView = (RecyclerView) fragmentView.findViewById(R.id.rv_recipe_steps);
-        recipeStepsRecyclerView.setHasFixedSize(true);
+        mBinding.rvRecipeSteps.setHasFixedSize(true);
 
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(getContext());
-        recipeStepsRecyclerView.setLayoutManager(layoutManager1);
+        mBinding.rvRecipeSteps.setLayoutManager(layoutManager1);
 
         if (intent.hasExtra(getString(R.string.key_intent_recipeSteps))) {
             recipeSteps = intent.getParcelableArrayListExtra(getString(R.string.key_intent_recipeSteps));
         }
 
-        RecipeStepAdapter recipeStepAdapter = new RecipeStepAdapter(recipeSteps,getContext(),this);
-        recipeStepsRecyclerView.setAdapter(recipeStepAdapter);
-
+        RecipeStepAdapter recipeStepAdapter = new RecipeStepAdapter(recipeSteps, getContext(), this);
+        mBinding.rvRecipeSteps.setAdapter(recipeStepAdapter);
 
 
         return fragmentView;
@@ -128,18 +127,11 @@ public class RecipeDetailFragment extends Fragment implements OnItemClickListene
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-       try {
-           mListener = (OnFragmentInteractionListener) context;
-       } catch (ClassCastException e) {
-           throw  new ClassCastException(context.toString() + " must implement OnItemClickListener");
-       }
-
-      /*  if (context instanceof OnFragmentInteractionListener) {
+        try {
             mListener = (OnFragmentInteractionListener) context;
-        } *//*else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }*/
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement OnItemClickListener");
+        }
     }
 
     @Override
@@ -147,9 +139,10 @@ public class RecipeDetailFragment extends Fragment implements OnItemClickListene
         super.onDetach();
         mListener = null;
     }
+
     @Override
     public void onClick(int position) {
-     //   Toast.makeText(getContext()," position " + position,Toast.LENGTH_SHORT).show();
+        //   Toast.makeText(getContext()," position " + position,Toast.LENGTH_SHORT).show();
         mListener.onClick(position);
     }
 
@@ -166,6 +159,7 @@ public class RecipeDetailFragment extends Fragment implements OnItemClickListene
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+
         void onClick(int position);
     }
 }

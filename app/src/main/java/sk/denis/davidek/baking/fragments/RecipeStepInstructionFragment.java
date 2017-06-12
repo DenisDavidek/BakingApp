@@ -1,17 +1,19 @@
-package sk.denis.davidek.baking;
+package sk.denis.davidek.baking.fragments;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import sk.denis.davidek.baking.R;
 import sk.denis.davidek.baking.data.RecipeStep;
+import sk.denis.davidek.baking.databinding.FragmentRecipeStepInstructionBinding;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,11 +35,10 @@ public class RecipeStepInstructionFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private TextView recipeInstructionTextView;
-    private String recipeInstruction;
-
     private ArrayList<RecipeStep> recipeSteps;
     private int currentRecipeStepsIndex;
+
+    private FragmentRecipeStepInstructionBinding mBinding;
 
     public RecipeStepInstructionFragment() {
         // Required empty public constructor
@@ -74,19 +75,10 @@ public class RecipeStepInstructionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View fragmentView = inflater.inflate(R.layout.fragment_recipe_step_instruction, container, false);
 
-        recipeInstructionTextView = (TextView) fragmentView.findViewById(R.id.tv_recipe_step_instruction);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_step_instruction, container, false);
+        View fragmentView = mBinding.getRoot();
 
-      /*  if (recipeInstruction != null) {
-            recipeInstructionTextView.setText("");
-            recipeInstructionTextView.setText(recipeInstruction);
-        }*/
-/*if (!recipeInstructionTextView.getText().toString().isEmpty()) {
-
-    recipeInstructionTextView.setText("");
-
-}*/
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(getString(R.string.key_intent_recipeSteps)) &&
@@ -97,26 +89,23 @@ public class RecipeStepInstructionFragment extends Fragment {
 
         }
 
-      if (recipeSteps != null) {
+        if (recipeSteps != null) {
 
-          String test = recipeSteps.get(currentRecipeStepsIndex).getStepDescription();
-          recipeInstructionTextView.setText(test);
-      }
+            String recipeInstruction = recipeSteps.get(currentRecipeStepsIndex).getStepDescription();
+            mBinding.tvRecipeStepInstruction.setText(recipeInstruction);
+        }
 
         return fragmentView;
     }
-    public void setRecipeInstruction(String recipeInstruction){
 
-        this.recipeInstruction = recipeInstruction;
-    }
-
-    public void setRecipeSteps(ArrayList<RecipeStep> recipeSteps){
+    public void setRecipeSteps(ArrayList<RecipeStep> recipeSteps) {
         this.recipeSteps = recipeSteps;
     }
 
-    public void setCurrentRecipeStepsIndex (int currentRecipeStepsIndex) {
+    public void setCurrentRecipeStepsIndex(int currentRecipeStepsIndex) {
         this.currentRecipeStepsIndex = currentRecipeStepsIndex;
     }
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -129,10 +118,7 @@ public class RecipeStepInstructionFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
-        } /*else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }*/
+        }
     }
 
     @Override
@@ -144,8 +130,8 @@ public class RecipeStepInstructionFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(getString(R.string.key_intent_recipeSteps),recipeSteps);
-        outState.putInt(getString(R.string.key_intent_recipeStepsIndex),currentRecipeStepsIndex);
+        outState.putParcelableArrayList(getString(R.string.key_intent_recipeSteps), recipeSteps);
+        outState.putInt(getString(R.string.key_intent_recipeStepsIndex), currentRecipeStepsIndex);
     }
 
     /**

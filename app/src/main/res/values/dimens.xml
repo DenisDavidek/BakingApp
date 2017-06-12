@@ -18,4 +18,9 @@
     <dimen name="tv_marginLeft">5dp</dimen>
     <dimen name="tv_padding">8dp</dimen>
     <dimen name="zerodpheight">0dp</dimen>
+
+    <dimen name="iv_32dp">32dp</dimen>
+
+    <dimen name="widget_margin">8dp</dimen>
+    <dimen name="widget_header_padding">16dp</dimen>
 </resources>
