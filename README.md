@@ -28,7 +28,7 @@ Unlike Popular Movies where we gave you an implementation guide, it will be up t
 <img src="images/Projekt3-N5X_portrait.png" width="399"> </img> <img src="images/Projekt3-N5X_portrait1.png" width="399"> </img>
 
 <img src="images/Projekt3-N9_landscape.png" width="799"> </img>  
-<img src="images/Projekt3-N9_portrait.png" width="499"> </img>
+<img src="images/Projekt3-N9_portrait.png" width="469"> </img> <img src="images/Projekt3-N5X_widget.png" width="399"> </img>
 
 
 # Developer Setup
